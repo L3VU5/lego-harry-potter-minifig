@@ -25,9 +25,9 @@ type FormInputs = {
 };
 
 interface OrderDetailsProps {
-  navigation: any; // Assuming navigation has a type
+  navigation: any;
   route: {
-    params: { setDetails: any }; // Assuming route.params has a type
+    params: { setDetails: any };
   };
   hasKeyboard: boolean;
 }
