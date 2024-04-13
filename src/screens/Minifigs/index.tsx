@@ -9,14 +9,10 @@ import {
   DrawWrapper,
   StyledText,
   Heading,
-  MinifigCard,
-  MinifigImage,
-  MinifigTitle,
-  MinifigShowDetailsButton,
-  DetailsLabel,
   CardsList,
   StyledActivityIndicator,
 } from "./style";
+import MinifigCard from "./components/MinifigCard";
 
 const MINIFIGS_ENDPOINT = `https://rebrickable.com/api/v3/lego/minifigs/?key=${process.env.EXPO_PUBLIC_REBRICKABLE_KEY}&search=harry%20potter`;
 
@@ -84,21 +80,12 @@ const Minifigs = ({ navigation }) => {
   const renderItem = useCallback(
     ({ item, index }) => (
       <MinifigCard
+        name={item.name}
         onPress={() => setSelectedMinifigId(index)}
         isSelected={index === selectedMinifigId}
-      >
-        <MinifigImage
-          defaultSource={require("../../assets/minifigFallback.jpg")}
-          source={{ uri: item.set_img_url }}
-          resizeMode="contain"
-        />
-        <MinifigTitle>{item.name}</MinifigTitle>
-        <MinifigShowDetailsButton
-          onPress={() => onShowDetailsPress(item.set_url)}
-        >
-          <DetailsLabel>Show details</DetailsLabel>
-        </MinifigShowDetailsButton>
-      </MinifigCard>
+        imgSrc={{ uri: item.set_img_url }}
+        onShowDetailsPress={() => onShowDetailsPress(item.set_url)}
+      />
     ),
     [selectedMinifigId]
   );

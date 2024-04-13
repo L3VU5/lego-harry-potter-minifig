@@ -21,7 +21,7 @@ import {
 const OrderSummary = ({ navigation, route }) => {
   const { setDetails, orderDetails } = route.params;
   const { setNum, minifigImageSrc, minifigTitle } = setDetails;
-  const MINIFIG_SET_ENDPOINT = `https://rebrickable.com/api/v3/lego/minifigs/${setNum}/parts/?key=${process.env.EXPO_PUBLIC_REBRICKABLE_KEY}&search=harry%20potter`;
+  const MINIFIG_SET_ENDPOINT = `https://rebrickable.com/api/v3/lego/minifigs/${setNum}/parts/?key=${process.env.EXPO_PUBLIC_REBRICKABLE_KEY}`;
 
   const submitOrderMutation = (data) => {
     return new Promise((resolve) => {
@@ -74,7 +74,11 @@ const OrderSummary = ({ navigation, route }) => {
             <Heading>SUMMARY</Heading>
 
             <Minifig>
-              <MinifigImage source={{ uri: minifigImageSrc }} />
+              <MinifigImage
+                source={{ uri: minifigImageSrc }}
+                defaultSource={require("../../assets/minifigFallback.jpg")}
+                resizeMode="contain"
+              />
               <MinifigTitle>{minifigTitle}</MinifigTitle>
             </Minifig>
 
