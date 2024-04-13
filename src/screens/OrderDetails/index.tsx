@@ -24,7 +24,19 @@ type FormInputs = {
   zipCode: string;
 };
 
-const OrderDetails = ({ navigation, route, hasKeyboard }) => {
+interface OrderDetailsProps {
+  navigation: any; // Assuming navigation has a type
+  route: {
+    params: { setDetails: any }; // Assuming route.params has a type
+  };
+  hasKeyboard: boolean;
+}
+
+const OrderDetails: React.FC<OrderDetailsProps> = ({
+  navigation,
+  route,
+  hasKeyboard,
+}) => {
   const setDetails = route.params;
   const {
     control,

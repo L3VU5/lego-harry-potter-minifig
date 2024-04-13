@@ -25,12 +25,17 @@ interface Minifig {
   last_modified_dt: string;
 }
 
+type MinifigsResponse = {
+  results: Minifig[];
+  count: number;
+};
+
 const Minifigs = ({ navigation }) => {
   const {
     isLoading,
     error,
     data: minifigsData,
-  } = useQuery({
+  } = useQuery<MinifigsResponse>({
     queryKey: ["minifigs"],
     queryFn: () => fetch(MINIFIGS_ENDPOINT).then((res) => res.json()),
   });

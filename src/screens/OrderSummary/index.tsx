@@ -18,7 +18,36 @@ import {
   StyledActivityIndicator,
 } from "./style";
 
-const OrderSummary = ({ navigation, route }) => {
+type OrderSummaryProps = {
+  navigation: any;
+  route: {
+    params: {
+      setDetails: SetDetails;
+      orderDetails: OrderDetails;
+    };
+  };
+};
+
+type SetDetails = {
+  setNum: string;
+  minifigImageSrc: string;
+  minifigTitle: string;
+};
+
+type OrderDetails = {
+  fullName: string;
+  email: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+};
+
+type Part = {
+  id?: string;
+};
+
+const OrderSummary: React.FC<OrderSummaryProps> = ({ navigation, route }) => {
   const { setDetails, orderDetails } = route.params;
   const { setNum, minifigImageSrc, minifigTitle } = setDetails;
   const MINIFIG_SET_ENDPOINT = `https://rebrickable.com/api/v3/lego/minifigs/${setNum}/parts/?key=${process.env.EXPO_PUBLIC_REBRICKABLE_KEY}`;
@@ -87,7 +116,7 @@ const OrderSummary = ({ navigation, route }) => {
                 There are {partsData?.count} parts in this minifig:
               </PartsText>
               <PartsList>
-                {partsData?.results?.map((part) => (
+                {partsData?.results?.map((part: Part) => (
                   <StyledPart key={part?.id} item={part} />
                 ))}
               </PartsList>
