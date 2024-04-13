@@ -1,6 +1,6 @@
 # LEGO Harry Potter Minifigs
 
-Simple application, that allows user to draw five free LEGO Harry Potter Minifigs and select one of them for free. It utilizes Rebrickable API for data.
+Simple application, that allows user to draw five random LEGO Harry Potter Minifigs and select one of them for free. It utilizes Rebrickable API for data.
 
 ## Table of Contents
 
