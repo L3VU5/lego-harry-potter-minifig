@@ -23,6 +23,15 @@ const OrderSummary = ({ navigation, route }) => {
   const { setNum, minifigImageSrc, minifigTitle } = setDetails;
   const MINIFIG_SET_ENDPOINT = `https://rebrickable.com/api/v3/lego/minifigs/${setNum}/parts/?key=${process.env.EXPO_PUBLIC_REBRICKABLE_KEY}&search=harry%20potter`;
 
+  const submitOrderMutation = (data) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log("Data sent to backend:", data);
+        resolve({ message: "Order submitted successfully!" }); // Mock response
+      }, 1000); // Simulate a delay
+    });
+  };
+
   const {
     isLoading,
     error,
