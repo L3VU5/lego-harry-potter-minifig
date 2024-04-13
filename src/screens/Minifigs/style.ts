@@ -28,18 +28,6 @@ export const Heading = styled(StyledText)`
   font-size: 26px;
 `;
 
-export const ButtonText = styled(StyledText)`
-  font-size: 16px;
-`;
-
-export const ChooseButton = styled.Pressable`
-  background-color: #028dec;
-  border-radius: 24px;
-  justify-content: center;
-  padding: 12px 64px;
-  height: 48px;
-`;
-
 interface MinifigCardProps {
   isSelected: boolean;
 }
@@ -79,4 +67,8 @@ export const MinifigShowDetailsButton = styled.Pressable``;
 
 export const DetailsLabel = styled(StyledText)`
   color: #fe9037;
+`;
+
+export const StyledActivityIndicator = styled.ActivityIndicator`
+  flex: 1;
 `;

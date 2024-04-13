@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
+import Button from "../../components/Button";
 import {
   Wrapper,
   Modal,
@@ -11,11 +12,10 @@ import {
   StyledPart,
   PartsText,
   PartsList,
-  SubmitButton,
   StyledText,
-  ButtonText,
   CloseButton,
   CloseIcon,
+  StyledActivityIndicator,
 } from "./style";
 
 const OrderSummary = ({ navigation, route }) => {
@@ -31,13 +31,23 @@ const OrderSummary = ({ navigation, route }) => {
     queryKey: ["parts"],
     queryFn: () => fetch(MINIFIG_SET_ENDPOINT).then((res) => res.json()),
   });
+  const {
+    mutate,
+    isPending: isMutating,
+    error: mutationError,
+  } = useMutation({
+    mutationFn: submitOrderMutation,
+    onSuccess: () => navigation.navigate("minifigs"),
+  });
 
   function onSubmitButtonPress() {
-    console.warn(setDetails, orderDetails);
-    navigation.navigate("minifigs");
-  }
+    const data = {
+      orderDetails,
+      setNum: setDetails.setNum,
+    };
 
-  if (isLoading) return <StyledText>Loading...</StyledText>;
+    mutate(data);
+  }
 
   if (error)
     return <StyledText>{"An error has occurred: " + error.message}</StyledText>;
@@ -48,24 +58,39 @@ const OrderSummary = ({ navigation, route }) => {
         <CloseButton onPress={() => navigation.pop()}>
           <CloseIcon name="close" size={28} color="black" />
         </CloseButton>
-        <Heading>SUMMARY</Heading>
-        <Minifig>
-          <MinifigImage source={{ uri: minifigImageSrc }} />
-          <MinifigTitle>{minifigTitle}</MinifigTitle>
-        </Minifig>
-        <SetInfo>
-          <PartsText>
-            There are {partsData?.count} parts in this minifig:
-          </PartsText>
-          <PartsList>
-            {partsData?.results?.map((part) => (
-              <StyledPart item={part} />
-            ))}
-          </PartsList>
-        </SetInfo>
-        <SubmitButton onPress={onSubmitButtonPress}>
-          <ButtonText>SUBMIT</ButtonText>
-        </SubmitButton>
+        {isLoading || isMutating ? (
+          <StyledActivityIndicator />
+        ) : (
+          <>
+            <Heading>SUMMARY</Heading>
+
+            <Minifig>
+              <MinifigImage source={{ uri: minifigImageSrc }} />
+              <MinifigTitle>{minifigTitle}</MinifigTitle>
+            </Minifig>
+
+            <SetInfo>
+              <PartsText>
+                There are {partsData?.count} parts in this minifig:
+              </PartsText>
+              <PartsList>
+                {partsData?.results?.map((part) => (
+                  <StyledPart key={part?.id} item={part} />
+                ))}
+              </PartsList>
+            </SetInfo>
+
+            {mutationError && (
+              <StyledText>Error: {mutationError.message}</StyledText>
+            )}
+
+            <Button
+              onPress={onSubmitButtonPress}
+              disabled={isMutating}
+              label="SUBMIT"
+            />
+          </>
+        )}
       </Modal>
     </Wrapper>
   );

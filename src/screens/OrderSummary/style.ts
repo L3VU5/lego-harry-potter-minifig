@@ -41,19 +41,6 @@ export const Heading = styled(StyledText)`
   font-size: 28px;
 `;
 
-export const ButtonText = styled(StyledText)`
-  color: #fff;
-  font-size: 18px;
-`;
-
-export const SubmitButton = styled.Pressable`
-  justify-content: center;
-  height: 48px;
-  padding: 12px 64px;
-  background-color: #028dec;
-  border-radius: 24px;
-`;
-
 export const Minifig = styled.View`
   align-items: center;
   margin: 36px 0;
@@ -109,4 +96,8 @@ export const PartTitle = styled(StyledText)`
 export const PartId = styled(StyledText)`
   font-family: Satoshi-mid;
   color: #fe9037;
+`;
+
+export const StyledActivityIndicator = styled.ActivityIndicator`
+  flex: 1;
 `;

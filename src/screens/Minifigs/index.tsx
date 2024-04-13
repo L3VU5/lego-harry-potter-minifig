@@ -3,19 +3,19 @@ import { FlatList } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
 import { selectRandomIndices } from "../../utils/helpers";
+import Button from "../../components/Button";
 import {
   Wrapper,
   DrawWrapper,
   StyledText,
   Heading,
-  ButtonText,
-  ChooseButton,
   MinifigCard,
   MinifigImage,
   MinifigTitle,
   MinifigShowDetailsButton,
   DetailsLabel,
   CardsList,
+  StyledActivityIndicator,
 } from "./style";
 
 const MINIFIGS_ENDPOINT = `https://rebrickable.com/api/v3/lego/minifigs/?key=${process.env.EXPO_PUBLIC_REBRICKABLE_KEY}&search=harry%20potter`;
@@ -40,10 +40,12 @@ const Minifigs = ({ navigation }) => {
   });
 
   const [drawedMinifigs, setDrawedMinifigs] = useState<Minifig[]>([]);
-  const [selectedMinifigId, setSelectedMinifigId] = useState<number>(null);
+  const [selectedMinifigId, setSelectedMinifigId] = useState<number | null>(
+    null
+  );
 
   const selectRandomMinifigs = useCallback(() => {
-    const { results, count } = minifigsData;
+    const { results, count } = minifigsData || {};
 
     if (!minifigsData) return;
 
@@ -60,11 +62,14 @@ const Minifigs = ({ navigation }) => {
   }, []);
 
   const onChooseButtonPress: () => void = () => {
+    const selectedMinifig = drawedMinifigs[selectedMinifigId];
+    if (!selectedMinifig) return;
+
     const {
       set_num: setNum,
       set_img_url: minifigImageSrc,
       name: minifigTitle,
-    } = drawedMinifigs[selectedMinifigId];
+    } = selectedMinifig;
 
     setDrawedMinifigs([]);
     setSelectedMinifigId(null);
@@ -98,16 +103,17 @@ const Minifigs = ({ navigation }) => {
     [selectedMinifigId]
   );
 
-  if (isLoading) return <StyledText>Loading...</StyledText>;
-
   if (error)
     return <StyledText>{"An error has occurred: " + error.message}</StyledText>;
 
   return (
     <Wrapper>
-      {drawedMinifigs.length ? (
+      {isLoading ? (
+        <StyledActivityIndicator />
+      ) : drawedMinifigs.length ? (
         <>
           <Heading>CHOOSE YOUR MINIFIG</Heading>
+
           <CardsList>
             <FlatList
               horizontal
@@ -130,18 +136,16 @@ const Minifigs = ({ navigation }) => {
               renderItem={renderItem}
             />
           </CardsList>
-          <ChooseButton
-            disabled={selectedMinifigId === null}
+
+          <Button
             onPress={onChooseButtonPress}
-          >
-            <ButtonText>CHOOSE FIGURE</ButtonText>
-          </ChooseButton>
+            disabled={selectedMinifigId === null}
+            label="CHOOSE FIGURE"
+          />
         </>
       ) : (
         <DrawWrapper>
-          <ChooseButton onPress={selectRandomMinifigs}>
-            <ButtonText>DRAW FREE MINIFIG</ButtonText>
-          </ChooseButton>
+          <Button onPress={selectRandomMinifigs} label="DRAW FREE MINIFIG!" />
         </DrawWrapper>
       )}
     </Wrapper>

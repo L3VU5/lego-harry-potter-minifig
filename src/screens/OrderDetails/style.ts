@@ -22,10 +22,6 @@ export const Heading = styled(StyledText)`
   height: 40px;
 `;
 
-export const ButtonText = styled(StyledText)`
-  font-size: 18px;
-`;
-
 export const Field = styled.View`
   margin-bottom: 12px;
 `;
@@ -43,14 +39,6 @@ export const FieldLabel = styled(StyledText)`
 `;
 
 export const StyledTextInput = styled(TextInput)``;
-
-export const ChooseButton = styled.Pressable`
-  justify-content: center;
-  height: 48px;
-  padding: 12px 64px;
-  background-color: #028dec;
-  border-radius: 24px;
-`;
 
 export const Form = styled.ScrollView`
   margin: 24px;

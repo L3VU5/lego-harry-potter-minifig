@@ -6,14 +6,14 @@ import withKeyboard from "../../hocs/withKeyboard";
 import {
   Wrapper,
   Heading,
-  ButtonText,
   Field,
   FieldError,
   FieldLabel,
   StyledTextInput,
-  ChooseButton,
   Form,
 } from "./style";
+import Button from "../../components/Button";
+import { emailRegEx, zipCodeRegEx } from "../../constants/regex";
 
 type FormInputs = {
   fullName: string;
@@ -29,7 +29,7 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
   } = useForm<FormInputs>({
     mode: "onTouched",
     defaultValues: {
@@ -56,6 +56,7 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
   return (
     <Wrapper>
       {!hasKeyboard && <Heading>PERSONAL DETAILS</Heading>}
+
       <Form>
         <Field>
           <FieldLabel>Full name</FieldLabel>
@@ -89,8 +90,7 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
             rules={{
               required: "Email is required.",
               pattern: {
-                value:
-                  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                value: emailRegEx,
                 message: "Invalid email format.",
               },
             }}
@@ -186,7 +186,7 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
             rules={{
               required: "Zip code is required.",
               pattern: {
-                value: /^\d{5}$|^\d{5}-\d{4}$/,
+                value: zipCodeRegEx,
                 message: "Invalid zip code format.",
               },
             }}
@@ -206,10 +206,13 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
           {errors.zipCode && <FieldError>{errors.zipCode.message}</FieldError>}
         </Field>
       </Form>
+
       {!hasKeyboard && (
-        <ChooseButton onPress={handleSubmit(onSubmit)}>
-          <ButtonText>VIEW SUMMARY</ButtonText>
-        </ChooseButton>
+        <Button
+          onPress={handleSubmit(onSubmit)}
+          disabled={!isValid || !isDirty}
+          label="VIEW SUMMARY"
+        />
       )}
     </Wrapper>
   );
