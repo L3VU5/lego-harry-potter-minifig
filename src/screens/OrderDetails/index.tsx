@@ -1,3 +1,5 @@
+import { useRef } from "react";
+import { TextInput } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 
 import withKeyboard from "../../hocs/withKeyboard";
@@ -23,7 +25,7 @@ type FormInputs = {
 };
 
 const OrderDetails = ({ navigation, route, hasKeyboard }) => {
-  const { setNum } = route.params;
+  const setDetails = route.params;
   const {
     control,
     handleSubmit,
@@ -40,8 +42,15 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
     },
   });
 
+  const fullNameRef = useRef<TextInput>(null);
+  const emailRef = useRef<TextInput>(null);
+  const addressRef = useRef<TextInput>(null);
+  const cityRef = useRef<TextInput>(null);
+  const stateRef = useRef<TextInput>(null);
+  const zipCodeRef = useRef<TextInput>(null);
+
   const onSubmit = (data: FormInputs) => {
-    navigation.navigate("orderSummary", { orderDetails: data, setNum });
+    navigation.navigate("orderSummary", { orderDetails: data, setDetails });
   };
 
   return (
@@ -57,11 +66,13 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <StyledTextInput
-                style=""
+                ref={fullNameRef}
                 placeholder="Full name"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                returnKeyType="next"
+                onSubmitEditing={() => emailRef.current?.focus()}
               />
             )}
             name="fullName"
@@ -85,11 +96,13 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <StyledTextInput
-                style=""
+                ref={emailRef}
                 placeholder="Email"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                returnKeyType="next"
+                onSubmitEditing={() => addressRef.current?.focus()}
               />
             )}
             name="email"
@@ -106,11 +119,13 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <StyledTextInput
-                style=""
+                ref={addressRef}
                 placeholder="Address"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                returnKeyType="next"
+                onSubmitEditing={() => cityRef.current?.focus()}
               />
             )}
             name="address"
@@ -127,11 +142,13 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <StyledTextInput
-                style=""
+                ref={cityRef}
                 placeholder="City"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                returnKeyType="next"
+                onSubmitEditing={() => stateRef.current?.focus()}
               />
             )}
             name="city"
@@ -148,11 +165,13 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <StyledTextInput
-                style=""
+                ref={stateRef}
                 placeholder="State"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                returnKeyType="next"
+                onSubmitEditing={() => zipCodeRef.current?.focus()}
               />
             )}
             name="state"
@@ -173,11 +192,13 @@ const OrderDetails = ({ navigation, route, hasKeyboard }) => {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <StyledTextInput
-                style=""
+                ref={zipCodeRef}
                 placeholder="Zip code"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                returnKeyType="done"
+                onSubmitEditing={handleSubmit(onSubmit)}
               />
             )}
             name="zipCode"

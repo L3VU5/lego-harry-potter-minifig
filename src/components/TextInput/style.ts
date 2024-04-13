@@ -2,7 +2,11 @@ import styled from "styled-components/native";
 
 export const Wrapper = styled.View``;
 
-export const StyledTextInput = styled.TextInput`
+interface ITextInput {
+  ref: any;
+}
+
+export const StyledTextInput = styled.TextInput<ITextInput>`
   background-color: #fff;
   padding: 16px;
   font-size: 16px;

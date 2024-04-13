@@ -40,7 +40,7 @@ const Minifigs = ({ navigation }) => {
   });
 
   const [drawedMinifigs, setDrawedMinifigs] = useState<Minifig[]>([]);
-  const [selectedMinifigId, setSelectedMinifigId] = useState<number>(0);
+  const [selectedMinifigId, setSelectedMinifigId] = useState<number>(null);
 
   const selectRandomMinifigs = useCallback(() => {
     const { results, count } = minifigsData;
@@ -55,22 +55,33 @@ const Minifigs = ({ navigation }) => {
     setDrawedMinifigs(selected);
   }, [minifigsData, selectRandomIndices]);
 
-  const onShowDetailsPress = useCallback((detailsUrl) => {
+  const onShowDetailsPress = useCallback((detailsUrl: string) => {
     navigation.navigate("browser", { uri: detailsUrl });
   }, []);
 
   const onChooseButtonPress: () => void = () => {
-    const { set_num: setNum } = drawedMinifigs[selectedMinifigId];
+    const {
+      set_num: setNum,
+      set_img_url: minifigImageSrc,
+      name: minifigTitle,
+    } = drawedMinifigs[selectedMinifigId];
 
     setDrawedMinifigs([]);
-    setSelectedMinifigId(0);
+    setSelectedMinifigId(null);
 
-    navigation.navigate("orderDetails", { setNum });
+    navigation.navigate("orderDetails", {
+      setNum,
+      minifigImageSrc,
+      minifigTitle,
+    });
   };
 
   const renderItem = useCallback(
     ({ item, index }) => (
-      <MinifigCard isSelected={index === selectedMinifigId}>
+      <MinifigCard
+        onPress={() => setSelectedMinifigId(index)}
+        isSelected={index === selectedMinifigId}
+      >
         <MinifigImage
           defaultSource={require("../../assets/minifigFallback.jpg")}
           source={{ uri: item.set_img_url }}
@@ -86,13 +97,6 @@ const Minifigs = ({ navigation }) => {
     ),
     [selectedMinifigId]
   );
-
-  const onScrollEndDrag = (e) => {
-    const { x: offsetX } = e?.nativeEvent?.contentOffset;
-    const activeItemIndex = Math.round(offsetX / 280);
-
-    setSelectedMinifigId(activeItemIndex);
-  };
 
   if (isLoading) return <StyledText>Loading...</StyledText>;
 
@@ -124,10 +128,12 @@ const Minifigs = ({ navigation }) => {
               showsVerticalScrollIndicator={false}
               scrollEventThrottle={1}
               renderItem={renderItem}
-              onMomentumScrollEnd={onScrollEndDrag}
             />
           </CardsList>
-          <ChooseButton onPress={onChooseButtonPress}>
+          <ChooseButton
+            disabled={selectedMinifigId === null}
+            onPress={onChooseButtonPress}
+          >
             <ButtonText>CHOOSE FIGURE</ButtonText>
           </ChooseButton>
         </>

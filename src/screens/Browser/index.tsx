@@ -1,10 +1,7 @@
 import React from "react";
 import { WebView } from "react-native-webview";
-import styled from "styled-components/native";
 
-const StyledSafeAreaView = styled.SafeAreaView`
-  flex: 1;
-`;
+import { StyledSafeAreaView } from "./style";
 
 const Browser = ({ route }) => {
   const { uri } = route.params;

@@ -1,6 +1,7 @@
 import styled from "styled-components/native";
 
 import TextInput from "../../components/TextInput";
+import Text from "../../components/Text";
 
 export const Wrapper = styled.View`
   flex: 1;
@@ -10,12 +11,12 @@ export const Wrapper = styled.View`
   padding: 36px 0;
 `;
 
-export const StyledText = styled.Text`
+export const StyledText = styled(Text)`
   color: #fff;
-  font-weight: bold;
 `;
 
 export const Heading = styled(StyledText)`
+  font-family: Satoshi-xbold;
   font-size: 28px;
   line-height: 40px;
   height: 40px;
