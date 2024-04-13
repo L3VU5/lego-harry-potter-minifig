@@ -70,7 +70,7 @@ export const MinifigTitle = styled(StyledText)`
   color: #000;
 `;
 
-export const MinifigShowDetails = styled.Pressable``;
+export const MinifigShowDetailsButton = styled.Pressable``;
 
 export const DetailsLabel = styled.Text`
   font-weight: bold;
