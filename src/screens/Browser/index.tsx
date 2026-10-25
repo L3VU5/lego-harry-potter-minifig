@@ -1,15 +1,27 @@
-import React from "react";
+import { ActivityIndicator } from "react-native";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { WebView } from "react-native-webview";
+import styled from "styled-components/native";
 
-import { StyledSafeAreaView } from "./style";
+import { colors } from "../../theme";
+import type { RootStackParamList } from "../../types";
 
-const Browser = ({ route }) => {
-  const { uri } = route.params;
+const Screen = styled.View`
+  flex: 1;
+  background-color: ${colors.background};
+`;
+
+type Props = NativeStackScreenProps<RootStackParamList, "browser">;
+
+export default function Browser({ route }: Props) {
   return (
-    <StyledSafeAreaView>
-      <WebView source={{ uri }} />
-    </StyledSafeAreaView>
+    <Screen>
+      <WebView
+        source={{ uri: route.params.uri }}
+        startInLoadingState
+        renderLoading={() => <ActivityIndicator size="large" color={colors.accent} style={{ flex: 1 }} />}
+        style={{ backgroundColor: colors.background }}
+      />
+    </Screen>
   );
-};
-
-export default Browser;
+}

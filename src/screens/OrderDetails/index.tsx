@@ -1,233 +1,144 @@
 import { useRef } from "react";
-import { TextInput } from "react-native";
-import { useForm, Controller } from "react-hook-form";
+import { ScrollView } from "react-native";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Controller, useForm } from "react-hook-form";
+import styled from "styled-components/native";
 
-import withKeyboard from "../../hocs/withKeyboard";
-import {
-  Wrapper,
-  Heading,
-  Field,
-  FieldError,
-  FieldLabel,
-  StyledTextInput,
-  Form,
-} from "./style";
 import Button from "../../components/Button";
+import KeyboardScreen from "../../components/KeyboardScreen";
+import StepIndicator from "../../components/StepIndicator";
+import Text from "../../components/Text";
+import TextField, { type TextFieldHandle } from "../../components/TextField";
 import { emailRegEx, zipCodeRegEx } from "../../constants/regex";
+import { colors, fonts } from "../../theme";
+import type { OrderDetails as OrderDetailsData, RootStackParamList } from "../../types";
 
-type FormInputs = {
-  fullName: string;
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-};
+const Screen = styled.View`
+  flex: 1;
+  padding: 16px 24px 32px;
+  gap: 20px;
+  background-color: ${colors.background};
+`;
 
-interface OrderDetailsProps {
-  navigation: any;
-  route: {
-    params: { setDetails: any };
-  };
-  hasKeyboard: boolean;
-}
+const Heading = styled(Text)`
+  margin-top: 4px;
+  text-align: center;
+  font-family: ${fonts.black};
+  font-size: 24px;
+`;
 
-const OrderDetails: React.FC<OrderDetailsProps> = ({
-  navigation,
-  route,
-  hasKeyboard,
-}) => {
-  const setDetails = route.params;
+const Chosen = styled(Text)`
+  text-align: center;
+  color: ${colors.textMuted};
+  font-size: 14px;
+`;
+
+const Form = styled.View`
+  gap: 14px;
+`;
+
+const Row = styled.View`
+  flex-direction: row;
+  gap: 12px;
+`;
+
+const Half = styled.View`
+  flex: 1;
+`;
+
+type FieldName = keyof OrderDetailsData;
+
+type Props = NativeStackScreenProps<RootStackParamList, "orderDetails">;
+
+export default function OrderDetails({ navigation, route }: Props) {
+  const { minifig } = route.params;
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid, isDirty },
-  } = useForm<FormInputs>({
+    formState: { errors, isValid },
+  } = useForm<OrderDetailsData>({
     mode: "onTouched",
-    defaultValues: {
-      fullName: "",
-      email: "",
-      address: "",
-      city: "",
-      state: "",
-      zipCode: "",
-    },
+    defaultValues: { fullName: "", email: "", address: "", city: "", state: "", zipCode: "" },
   });
 
-  const fullNameRef = useRef<TextInput>(null);
-  const emailRef = useRef<TextInput>(null);
-  const addressRef = useRef<TextInput>(null);
-  const cityRef = useRef<TextInput>(null);
-  const stateRef = useRef<TextInput>(null);
-  const zipCodeRef = useRef<TextInput>(null);
+  const refs = useRef<Partial<Record<FieldName, TextFieldHandle | null>>>({});
 
-  const onSubmit = (data: FormInputs) => {
-    navigation.navigate("orderSummary", { orderDetails: data, setDetails });
+  const onSubmit = (orderDetails: OrderDetailsData) => {
+    navigation.navigate("orderSummary", { minifig, orderDetails });
   };
 
-  return (
-    <Wrapper>
-      {!hasKeyboard && <Heading>PERSONAL DETAILS</Heading>}
-
-      <Form>
-        <Field>
-          <FieldLabel>Full name</FieldLabel>
-          <Controller
-            control={control}
-            rules={{
-              required: "Full name is required.",
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <StyledTextInput
-                ref={fullNameRef}
-                placeholder="Full name"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                returnKeyType="next"
-                onSubmitEditing={() => emailRef.current?.focus()}
-              />
-            )}
-            name="fullName"
-          />
-          {errors.fullName && (
-            <FieldError>{errors.fullName.message}</FieldError>
-          )}
-        </Field>
-
-        <Field>
-          <FieldLabel>Email</FieldLabel>
-          <Controller
-            control={control}
-            rules={{
-              required: "Email is required.",
-              pattern: {
-                value: emailRegEx,
-                message: "Invalid email format.",
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <StyledTextInput
-                ref={emailRef}
-                placeholder="Email"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                returnKeyType="next"
-                onSubmitEditing={() => addressRef.current?.focus()}
-              />
-            )}
-            name="email"
-          />
-          {errors.email && <FieldError>{errors.email.message}</FieldError>}
-        </Field>
-
-        <Field>
-          <FieldLabel>Address</FieldLabel>
-          <Controller
-            control={control}
-            rules={{
-              required: "Address is required.",
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <StyledTextInput
-                ref={addressRef}
-                placeholder="Address"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                returnKeyType="next"
-                onSubmitEditing={() => cityRef.current?.focus()}
-              />
-            )}
-            name="address"
-          />
-          {errors.address && <FieldError>{errors.address.message}</FieldError>}
-        </Field>
-
-        <Field>
-          <FieldLabel>City</FieldLabel>
-          <Controller
-            control={control}
-            rules={{
-              required: "City is required.",
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <StyledTextInput
-                ref={cityRef}
-                placeholder="City"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                returnKeyType="next"
-                onSubmitEditing={() => stateRef.current?.focus()}
-              />
-            )}
-            name="city"
-          />
-          {errors.city && <FieldError>{errors.city.message}</FieldError>}
-        </Field>
-
-        <Field>
-          <FieldLabel>State</FieldLabel>
-          <Controller
-            control={control}
-            rules={{
-              required: "State is required.",
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <StyledTextInput
-                ref={stateRef}
-                placeholder="State"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                returnKeyType="next"
-                onSubmitEditing={() => zipCodeRef.current?.focus()}
-              />
-            )}
-            name="state"
-          />
-          {errors.state && <FieldError>{errors.state.message}</FieldError>}
-        </Field>
-
-        <Field>
-          <FieldLabel>Zip code</FieldLabel>
-          <Controller
-            control={control}
-            rules={{
-              required: "Zip code is required.",
-              pattern: {
-                value: zipCodeRegEx,
-                message: "Invalid zip code format.",
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <StyledTextInput
-                ref={zipCodeRef}
-                placeholder="Zip code"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                returnKeyType="done"
-                onSubmitEditing={handleSubmit(onSubmit)}
-              />
-            )}
-            name="zipCode"
-          />
-          {errors.zipCode && <FieldError>{errors.zipCode.message}</FieldError>}
-        </Field>
-      </Form>
-
-      {!hasKeyboard && (
-        <Button
-          onPress={handleSubmit(onSubmit)}
-          disabled={!isValid || !isDirty}
-          label="VIEW SUMMARY"
+  // Renders one controlled field and moves the focus to `next` (or submits on the last one).
+  const field = (
+    name: FieldName,
+    label: string,
+    rules: { pattern?: RegExp; message?: string },
+    next: FieldName | null,
+    inputProps: Partial<React.ComponentProps<typeof TextField>> = {}
+  ) => (
+    <Controller
+      control={control}
+      name={name}
+      rules={{
+        required: `${label} is required.`,
+        pattern: rules.pattern ? { value: rules.pattern, message: rules.message ?? "Invalid format." } : undefined,
+      }}
+      render={({ field: { onChange, onBlur, value } }) => (
+        <TextField
+          ref={(input) => {
+            refs.current[name] = input;
+          }}
+          label={label}
+          value={value}
+          onChangeText={onChange}
+          onBlur={onBlur}
+          error={errors[name]?.message}
+          returnKeyType={next ? "next" : "done"}
+          onSubmitEditing={() => (next ? refs.current[next]?.focus() : handleSubmit(onSubmit)())}
+          {...inputProps}
         />
       )}
-    </Wrapper>
+    />
   );
-};
 
-export default withKeyboard(OrderDetails);
+  return (
+    <KeyboardScreen>
+      {(hasKeyboard) => (
+        <Screen>
+          {!hasKeyboard && (
+            <>
+              <Heading>Where should we send it?</Heading>
+              <StepIndicator current={2} />
+              <Chosen numberOfLines={1}>{minifig.title}</Chosen>
+            </>
+          )}
+
+          <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+            <Form>
+              {field("fullName", "Full name", {}, "email", { autoComplete: "name", textContentType: "name" })}
+              {field("email", "Email", { pattern: emailRegEx, message: "Invalid email format." }, "address", {
+                autoCapitalize: "none",
+                autoCorrect: false,
+                keyboardType: "email-address",
+                autoComplete: "email",
+                textContentType: "emailAddress",
+              })}
+              {field("address", "Address", {}, "city", { autoComplete: "street-address" })}
+              {field("city", "City", {}, "state")}
+              <Row>
+                <Half>{field("state", "State", {}, "zipCode")}</Half>
+                <Half>
+                  {field("zipCode", "Zip code", { pattern: zipCodeRegEx, message: "Use 12345 or 12345-6789." }, null, {
+                    keyboardType: "numbers-and-punctuation",
+                    autoComplete: "postal-code",
+                  })}
+                </Half>
+              </Row>
+            </Form>
+          </ScrollView>
+
+          {!hasKeyboard && <Button label="VIEW SUMMARY" disabled={!isValid} onPress={() => handleSubmit(onSubmit)()} />}
+        </Screen>
+      )}
+    </KeyboardScreen>
+  );
+}

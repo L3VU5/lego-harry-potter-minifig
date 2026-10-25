@@ -1,35 +1,48 @@
-import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { DarkTheme, NavigationContainer, type Theme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import { colors, fonts } from "../theme";
+import type { RootStackParamList } from "../types";
+import Browser from "./Browser";
 import Minifigs from "./Minifigs";
 import OrderDetails from "./OrderDetails";
 import OrderSummary from "./OrderSummary";
-import Browser from "./Browser";
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const RootNavigator = () => {
+const theme: Theme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    primary: colors.accent,
+    background: colors.background,
+    card: colors.background,
+    text: colors.text,
+    border: colors.border,
+  },
+};
+
+export default function RootNavigator() {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={theme}>
       <Stack.Navigator
         initialRouteName="minifigs"
-        screenOptions={{ headerShown: false }}
+        screenOptions={{
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerTitleStyle: { fontFamily: fonts.bold },
+          contentStyle: { backgroundColor: colors.background },
+        }}
       >
-        <Stack.Screen name="minifigs" component={Minifigs} />
-        <Stack.Screen name="orderDetails" component={OrderDetails} />
-        <Stack.Screen name="orderSummary" component={OrderSummary} />
+        <Stack.Screen name="minifigs" component={Minifigs} options={{ headerShown: false }} />
+        <Stack.Screen name="orderDetails" component={OrderDetails} options={{ title: "Delivery" }} />
+        <Stack.Screen name="orderSummary" component={OrderSummary} options={{ title: "Summary" }} />
         <Stack.Screen
           name="browser"
           component={Browser}
-          options={{
-            presentation: "modal",
-            gestureEnabled: true,
-          }}
+          options={{ title: "Minifig details", presentation: "modal", gestureEnabled: true }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
-
-export default RootNavigator;
+}
